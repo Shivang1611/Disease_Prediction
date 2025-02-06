@@ -169,8 +169,16 @@ st.markdown("""
             box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3);
         }
 
+        /* Media Query for Mobile Devices */
+        @media (max-width: 768px) {
+            h1 {
+                text-align: left !important;
+                font-size: 35px !important;
+            }
+        }
+
     </style>
-""", unsafe_allow_html=True)# Add a logo to the sidebar
+""", unsafe_allow_html=True)
 #st.sidebar.image("https://your-image-url.com/logo.png", use_column_width=True, output_format="PNG", caption="Disease Prediction")
 
 # Sidebar Navigation
