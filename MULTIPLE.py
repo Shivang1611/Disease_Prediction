@@ -259,7 +259,7 @@ from email.mime.text import MIMEText
 def send_email(user_email, query_message):
     sender_email = "your_email@example.com"
     receiver_email = "shivangshukla306@gmail.com"
-    password = "Shivang1611#"
+    password = "ijnp nywr dnmr kqxj"
 
     # Create the email content
     msg = MIMEMultipart()
