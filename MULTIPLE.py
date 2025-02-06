@@ -173,7 +173,7 @@ st.markdown("""
         @media (max-width: 768px) {
             h1 {
                 text-align: center !important;
-                font-size: 5px !important;
+                font-size: 22px !important;
             }
         }
 
