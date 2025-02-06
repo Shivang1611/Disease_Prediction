@@ -252,6 +252,36 @@ choice = st.sidebar.selectbox("Navigation", menu)
 st.sidebar.markdown("---")
 
 # Function for Query Page
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def send_email(user_email, query_message):
+    sender_email = "your_email@example.com"
+    receiver_email = "shivangshukla306@gmail.com"
+    password = "your_email_password"
+
+    # Create the email content
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = "New Query from Disease Prediction App"
+    body = f"User Email: {user_email}\n\nQuery Message:\n{query_message}"
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        # Connect to the server and send the email
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, password)
+        text = msg.as_string()
+        server.sendmail(sender_email, receiver_email, text)
+        server.quit()
+        return True
+    except Exception as e:
+        st.error(f"Error sending email: {e}")
+        return False
+
 def Query():
     st.markdown("<h1 class='animated-text'>Send Query</h1>", unsafe_allow_html=True)
     st.markdown("""
@@ -296,13 +326,14 @@ def Query():
         submit_button = st.form_submit_button("Send Query", help="Submit your query via email")
 
         if submit_button:
-            st.session_state.query_sent = True  # Flag to indicate the query was sent
-            st.success("Your query has been sent successfully!")
+            if send_email(user_email, query_message):
+                st.success("Your query has been sent successfully!")
+            else:
+                st.error("Failed to send your query. Please try again later.")
 
 # Page Navigation
 if choice == "Query":
     Query()
-
 
 #upload report page 
 
