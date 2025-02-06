@@ -485,10 +485,9 @@ def home_page():
 
 # Disease Prediction
 def disease_prediction():
-    st.markdown("<h1 class='animated-text'>🔍 Disease Prediction By Report</h1>",unsafe_allow_html=True)
+    st.markdown("<h1 class='animated-text'>🔍 Disease Prediction By Report</h1>", unsafe_allow_html=True)
     
     disease = st.selectbox("Select Disease", ["Diabetes", "Heart Disease", "Parkinson's Disease"])
-    
     
     if disease == "Diabetes":
         st.subheader("Diabetes Prediction")
@@ -504,13 +503,16 @@ def disease_prediction():
         age = st.number_input("Age", min_value=0)
 
         if st.button("Predict Diabetes"):
-         if glucose == 0 or blood_pressure == 0 or bmi == 0.0 or age == 0:
-          st.warning("⚠️ Please fill in all required fields before predicting.")
-        else:
-            input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, dpf, age]])
-            prediction = models["diabetes_best"].predict(input_data)
-            result = "Positive for Diabetes. Consult a doctor!" if prediction[0] == 1 else "No Diabetes detected."
-            st.success(result)
+            if glucose == 0 or blood_pressure == 0 or bmi == 0.0 or age == 0:
+                st.warning("⚠️ Please fill in all required fields before predicting.")
+            else:
+                try:
+                    input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, dpf, age]])
+                    prediction = models["diabetes_best"].predict(input_data)
+                    result = "Positive for Diabetes. Consult a doctor!" if prediction[0] == 1 else "No Diabetes detected."
+                    st.success(result)
+                except ValueError:
+                    st.error("You entered the wrong input, please enter the correct input.")
 
     elif disease == "Heart Disease":
         st.subheader("Heart Disease Prediction")
@@ -531,67 +533,59 @@ def disease_prediction():
         if st.button("Predict Heart Disease"):
             if age == 1 or trestbps == 80 or chol == 100 or thalach == 60:
                 st.warning("⚠️ Please enter all required values before predicting.")
-        else:
-            input_data = np.array([[age, 1 if sex == "Male" else 0, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
-            prediction = models["heart"].predict(input_data)
-            result = "Has Heart Disease. Consult a doctor!" if prediction[0] == 1 else "No Heart Disease detected."
-            st.success(result)
-
-    
-    
-    
-    
-    
-    
-    
-    else:
-     
-    
-           
-   # User Inputs Based on Dataset
-            st.subheader("Parkinson's Disease Prediction")
-
-# Integer inputs
-            age = st.number_input("Age", min_value=0, step=1)
-            gender = st.selectbox("Gender", ["Male", "Female"])  # Convert to binary later
-            ethnicity = st.number_input("Ethnicity", min_value=0, step=1)
-            bmi = st.number_input("BMI", min_value=0.0, format="%f")
-            smoking = st.number_input("Smoking", min_value=0, step=1)
-            alcohol = st.number_input("Alcohol Consumption", min_value=0.0, format="%f")
-            physical_activity = st.number_input("Physical Activity", min_value=0.0, format="%f")
-            diet_quality = st.number_input("Diet Quality", min_value=0.0, format="%f")
-            sleep_quality = st.number_input("Sleep Quality", min_value=0.0, format="%f")
-            family_history = st.number_input("Family History of Parkinson's", min_value=0, step=1)
-            brain_injury = st.number_input("Traumatic Brain Injury", min_value=0, step=1)
-            diabetes = st.number_input("Diabetes", min_value=0, step=1)
-            depression = st.number_input("Depression", min_value=0, step=1)
-            stroke = st.number_input("Stroke", min_value=0, step=1)
-            systolic_bp = st.number_input("Systolic Blood Pressure", min_value=0, step=1)
-            diastolic_bp = st.number_input("Diastolic Blood Pressure", min_value=0, step=1)
-            cholesterol = st.number_input("Cholesterol Total", min_value=0.0, format="%f")
-            tremor = st.number_input("Tremor", min_value=0, step=1)
-            rigidity = st.number_input("Rigidity", min_value=0, step=1)
-            bradykinesia = st.number_input("Bradykinesia", min_value=0, step=1)
-            postural_instability = st.number_input("Postural Instability", min_value=0, step=1)
-            speech_problems = st.number_input("Speech Problems", min_value=0, step=1)
-            sleep_disorders = st.number_input("Sleep Disorders", min_value=0, step=1)
-            constipation = st.number_input("Constipation", min_value=0, step=1)
-            
-    # Convert categorical inputs
-            gender_binary = 1 if gender == "Male" else 0
-    
-            if st.button("Predict Parkinson's Disease"):
-                if age == 0 or bmi == 0.0 or sleep_quality == 0.0 or cholesterol == 0.0:
-                    st.warning("⚠️ Please provide all necessary inputs before predicting.")
             else:
-                input_data = np.array([[age, gender_binary, ethnicity, bmi, smoking, alcohol, physical_activity, diet_quality, 
-                                        sleep_quality, family_history, brain_injury, diabetes, depression, stroke, systolic_bp, 
-                                        diastolic_bp, cholesterol, tremor, rigidity, bradykinesia, postural_instability, 
-                                        speech_problems, sleep_disorders, constipation]])
-                prediction = models["parkinsons"].predict(input_data)
-                result = "Parkinson's Detected. Consult a specialist!" if prediction[0] == 1 else "No Parkinson's detected."
-                st.success(result)
-# About Page
+                try:
+                    input_data = np.array([[age, 1 if sex == "Male" else 0, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
+                    prediction = models["heart"].predict(input_data)
+                    result = "Has Heart Disease. Consult a doctor!" if prediction[0] == 1 else "No Heart Disease detected."
+                    st.success(result)
+                except ValueError:
+                    st.error("You entered the wrong input, please enter the correct input.")
+
+    else:
+        st.subheader("Parkinson's Disease Prediction")
+
+        age = st.number_input("Age", min_value=0, step=1)
+        gender = st.selectbox("Gender", ["Male", "Female"])  # Convert to binary later
+        ethnicity = st.number_input("Ethnicity", min_value=0, step=1)
+        bmi = st.number_input("BMI", min_value=0.0, format="%f")
+        smoking = st.number_input("Smoking", min_value=0, step=1)
+        alcohol = st.number_input("Alcohol Consumption", min_value=0.0, format="%f")
+        physical_activity = st.number_input("Physical Activity", min_value=0.0, format="%f")
+        diet_quality = st.number_input("Diet Quality", min_value=0.0, format="%f")
+        sleep_quality = st.number_input("Sleep Quality", min_value=0.0, format="%f")
+        family_history = st.number_input("Family History of Parkinson's", min_value=0, step=1)
+        brain_injury = st.number_input("Traumatic Brain Injury", min_value=0, step=1)
+        diabetes = st.number_input("Diabetes", min_value=0, step=1)
+        depression = st.number_input("Depression", min_value=0, step=1)
+        stroke = st.number_input("Stroke", min_value=0, step=1)
+        systolic_bp = st.number_input("Systolic Blood Pressure", min_value=0, step=1)
+        diastolic_bp = st.number_input("Diastolic Blood Pressure", min_value=0, step=1)
+        cholesterol = st.number_input("Cholesterol Total", min_value=0.0, format="%f")
+        tremor = st.number_input("Tremor", min_value=0, step=1)
+        rigidity = st.number_input("Rigidity", min_value=0, step=1)
+        bradykinesia = st.number_input("Bradykinesia", min_value=0, step=1)
+        postural_instability = st.number_input("Postural Instability", min_value=0, step=1)
+        speech_problems = st.number_input("Speech Problems", min_value=0, step=1)
+        sleep_disorders = st.number_input("Sleep Disorders", min_value=0, step=1)
+        constipation = st.number_input("Constipation", min_value=0, step=1)
+        
+        gender_binary = 1 if gender == "Male" else 0
+
+        if st.button("Predict Parkinson's Disease"):
+            if age == 0 or bmi == 0.0 or sleep_quality == 0.0 or cholesterol == 0.0:
+                st.warning("⚠️ Please provide all necessary inputs before predicting.")
+            else:
+                try:
+                    input_data = np.array([[age, gender_binary, ethnicity, bmi, smoking, alcohol, physical_activity, diet_quality, 
+                                            sleep_quality, family_history, brain_injury, diabetes, depression, stroke, systolic_bp, 
+                                            diastolic_bp, cholesterol, tremor, rigidity, bradykinesia, postural_instability, 
+                                            speech_problems, sleep_disorders, constipation]])
+                    prediction = models["parkinsons"].predict(input_data)
+                    result = "Parkinson's Detected. Consult a specialist!" if prediction[0] == 1 else "No Parkinson's detected."
+                    st.success(result)
+                except ValueError:
+                    st.error("You entered the wrong input, please enter the correct input.")# About Page
 def about_page():
    
     st.markdown("<h1 class='animated-text'>ℹ️ About the Team</h1>", unsafe_allow_html=True)
@@ -730,7 +724,7 @@ def symptom_checker():
 
     st.markdown('<div class="symptom-container">', unsafe_allow_html=True)
     for i, symptom in enumerate(symptom_list):
-        col1, col2 = st.columns([3, 2])
+        col1, col2, col3 = st.columns([3, 2, 2])
         with col1:
             st.write(f"**{symptom.replace('_', ' ').title()}**")
         with col2:
@@ -740,9 +734,21 @@ def symptom_checker():
                 key=f"symptom_{i}",
                 label_visibility="collapsed"
             )
+        with col3:
+            severity = st.selectbox(
+                "",
+                ("Easy", "Moderate", "Hard"),
+                key=f"severity_{i}",
+                label_visibility="collapsed"
+            )
         if response == "Yes":
-            input_vector[0, i] = 1
-            selected_symptoms.append(symptom)
+            if severity == "Easy":
+                input_vector[0, i] = 1
+            elif severity == "Moderate":
+                input_vector[0, i] = 2
+            elif severity == "Hard":
+                input_vector[0, i] = 3
+            selected_symptoms.append(f"{symptom} ({severity})")
         
         progress = (i + 1) / len(symptom_list)
         progress_bar.progress(progress)
@@ -774,7 +780,6 @@ def symptom_checker():
                 st.error(f"Error during prediction: {e}")
         else:
             st.error("⚠️ Please select at least one symptom.")
-
     
     # Contact information with link styling
     
