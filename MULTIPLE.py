@@ -175,6 +175,9 @@ st.markdown("""
                 text-align: center !important;
                 font-size: 22px !important;
             }
+            h2 {
+                font-size: 24px !important;
+            }
         }
 
     </style>
