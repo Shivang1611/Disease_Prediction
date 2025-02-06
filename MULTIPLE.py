@@ -252,31 +252,19 @@ choice = st.sidebar.selectbox("Navigation", menu)
 st.sidebar.markdown("---")
 
 # Function for Query Page
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import yagmail
+
 
 def send_email(user_email, query_message):
-    sender_email = "your_email@example.com"
+    sender_email = "your_email@gmail.com"
     receiver_email = "shivangshukla306@gmail.com"
     password = "ijnp nywr dnmr kqxj"  # Use an app-specific password if 2FA is enabled
 
-    # Create the email content
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = "New Query from Disease Prediction App"
-    body = f"User Email: {user_email}\n\nQuery Message:\n{query_message}"
-    msg.attach(MIMEText(body, 'plain'))
-
     try:
-        # Connect to the server and send the email
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(sender_email, password)
-        text = msg.as_string()
-        server.sendmail(sender_email, receiver_email, text)
-        server.quit()
+        yag = yagmail.SMTP(sender_email, password)
+        subject = "New Query from Disease Prediction App"
+        body = f"User Email: {user_email}\n\nQuery Message:\n{query_message}"
+        yag.send(to=receiver_email, subject=subject, contents=body)
         return True
     except Exception as e:
         st.error(f"Error sending email: {e}")
@@ -333,8 +321,7 @@ def Query():
 
 # Page Navigation
 if choice == "Query":
-    Query()
-#upload report page 
+    Query()#upload report page 
 
 
 def create_report_upload_page():
