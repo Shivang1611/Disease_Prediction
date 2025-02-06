@@ -49,9 +49,11 @@ st.markdown("""
 
         /* Sidebar Customization */
         [data-testid="stSidebar"] {
-            background: rgba(0, 0, 0, 0.6) !important; /* Dark Transparent Layer */
+            background: rgba(0, 0, 0, 0.9) !important; /* Darker Background */
             color: #FAD7A0 !important;
             box-shadow: 4px 0px 10px rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            border-radius: 0 15px 15px 0;
         }
 
         /* Header Text Styling */
