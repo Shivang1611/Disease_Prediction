@@ -172,8 +172,8 @@ st.markdown("""
         /* Media Query for Mobile Devices */
         @media (max-width: 768px) {
             h1 {
-                text-align: left !important;
-                font-size: 20px !important;
+                text-align: center !important;
+                font-size: 5px !important;
             }
         }
 
