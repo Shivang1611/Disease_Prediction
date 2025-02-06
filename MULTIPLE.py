@@ -20,18 +20,18 @@ def load_model(path):
 
 # Paths to trained models
 model_paths = {
-    "diabetes": "C:/Users/User/Desktop/Disease/optimized_disease_prediction_model(the model file).sav",
-    "diabetes_best": "C:/Users/User/Desktop/Disease/best_model_for_diabetes.sav",
-    "heart": "C:/Users/User/Desktop/Disease/trained_model_for_heart_disease.sav",
-    "parkinsons": "C:/Users/User/Desktop/Multiple/parkinsons_model.sav"
+    "Symptoms": "./optimized_disease_prediction_model(the model file).sav",
+    "diabetes_best": "./best_model_for_diabetes.sav",
+    "heart": "./trained_model_for_heart_disease.sav",
+    "parkinsons": "./parkinsons_model.sav"
 }
 models = {name: load_model(path) for name, path in model_paths.items()}
-encoder_path = "C:/Users/User/Desktop/Disease/disease_label_encoder(for converting disease names).sav"
+encoder_path = "./disease_label_encoder(for converting disease names).sav"
 with open(encoder_path, "rb") as encoder_file:
     label_encoder = joblib.load(encoder_file)
 
 # Load symptom names
-df = pd.read_csv("C:/Users/User/Desktop/Disease/Testing.csv")
+df = pd.read_csv("./Testing.csv")
 symptom_list = list(df.columns[:-1])
 
 # Set Streamlit page configuration
@@ -374,89 +374,84 @@ def create_report_upload_page():
         
 
     col1, col2, col3 = st.columns(3)
+    if 'page' not in st.session_state:
+     st.session_state.page = None
 
+# Diabetes Report Section
     with col1:
         st.markdown("<div class='report-container'><h3>🩸 Diabetes Reports</h3>", unsafe_allow_html=True)
         diabetes_file = st.file_uploader("Upload Diabetes Report", type=['txt', 'pdf', 'csv'], key='diabetes')
         if diabetes_file:
             try:
-                
                 st.success("✅ Report parsed successfully!", icon="✅")
+                st.session_state.diabetes_data = diabetes_file  # Save file in session state
                 if st.button("🔍 Analyze Diabetes", key='diabetes_pred', help="Go to Diabetes Prediction"):
                     st.session_state.page = "Diabetes Prediction"
-                    
             except Exception as e:
                 st.error(f"❌ Error parsing report: {str(e)}")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Heart Disease Report Section
+# Heart Disease Report Section
     with col2:
         st.markdown("<div class='report-container'><h3>❤️ Heart Disease Reports</h3>", unsafe_allow_html=True)
         heart_file = st.file_uploader("Upload Heart Report", type=['txt', 'pdf', 'csv'], key='heart')
         if heart_file:
             try:
-                
                 st.success("✅ Report parsed successfully!", icon="✅")
+                st.session_state.heart_data = heart_file  # Save file in session state
                 if st.button("🔍 Analyze Heart Disease", key='heart_pred', help="Go to Heart Disease Prediction"):
                     st.session_state.page = "Heart Disease Prediction"
-                   
             except Exception as e:
                 st.error(f"❌ Error parsing report: {str(e)}")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Parkinson's Report Section
+# Parkinson's Report Section
     with col3:
         st.markdown("<div class='report-container'><h3>🧠 Parkinson's Reports</h3>", unsafe_allow_html=True)
         parkinsons_file = st.file_uploader("Upload Parkinson's Report", type=['txt', 'pdf', 'csv'], key='parkinsons')
         if parkinsons_file:
             try:
-                
                 st.success("✅ Report parsed successfully!", icon="✅")
+                st.session_state.parkinsons_data = parkinsons_file  # Save file in session state
                 if st.button("🔍 Analyze Parkinson's", key='parkinsons_pred', help="Go to Parkinson’s Prediction"):
                     st.session_state.page = "Parkinson's Prediction"
-                    
             except Exception as e:
                 st.error(f"❌ Error parsing report: {str(e)}")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Handle navigation and prediction pages based on session_state.page
-    if 'page' in st.session_state:
-        if st.session_state.page == "Diabetes Prediction":
-            st.write("## Diabetes Prediction Results")
-            diabetes_data = st.session_state.get('diabetes_data', None)
-            if diabetes_data:
-                with st.spinner("🧑‍🔬 Analyzing diabetes report... Please wait!"):
-                   time.sleep(4)  # Simulate some delay for analysis
-                   st.success("✅ Analysis complete! We'll update you shortly.")
-                   
-                   # Optionally, display a placeholder or further content
-                   st.info("We are working on improving the results. Check back soon for more detailed analysis.")
-            else:
-                st.error("No diabetes report data available")
+# Handle navigation and prediction pages based on session_state.page
+if st.session_state.page == "Diabetes Prediction":
+    st.write("## Diabetes Prediction Results")
+    diabetes_data = st.session_state.get('diabetes_data', None)
+    if diabetes_data:
+        with st.spinner("🧑‍🔬 Analyzing diabetes report... Please wait!"):
+            time.sleep(4)
+            st.success("✅ Analysis complete! We'll update you shortly.")
+            st.info("We are working on improving the results. Check back soon for more detailed analysis.")
+    else:
+        st.error("No diabetes report data available")
 
-        elif st.session_state.page == "Heart Disease Prediction":
-            st.write("## Heart Disease Prediction Results")
-            heart_data = st.session_state.get('heart_data', None)
-            if heart_data:
-              with st.spinner("🧑‍🔬 Analyzing diabetes report... Please wait!"):
-                    time.sleep(4)  # Simulate some delay for analysis
-                    st.success("✅ Analysis complete! We'll update you shortly.")
-                    
-                    # Optionally, display a placeholder or further content
-                    st.info("We are working on improving the results. Check back soon for more detailed analysis.")
+elif st.session_state.page == "Heart Disease Prediction":
+    st.write("## Heart Disease Prediction Results")
+    heart_data = st.session_state.get('heart_data', None)
+    if heart_data:
+        with st.spinner("🧑‍🔬 Analyzing heart disease report... Please wait!"):
+            time.sleep(4)
+            st.success("✅ Analysis complete! We'll update you shortly.")
+            st.info("We are working on improving the results. Check back soon for more detailed analysis.")
+    else:
+        st.error("No heart disease report data available")
 
-        elif st.session_state.page == "Parkinson's Prediction":
-            st.write("## Parkinson's Disease Prediction Results")
-            parkinsons_data = st.session_state.get('parkinsons_data', None)
-            if parkinsons_data:
-                with st.spinner("🧑‍🔬 Analyzing diabetes report... Please wait!"):
-                    time.sleep(4)  # Simulate some delay for analysis
-                    st.success("✅ Analysis complete! We'll update you shortly.")
-                    
-                    # Optionally, display a placeholder or further content
-                    st.info("We are working on improving the results. Check back soon for more detailed analysis.")
-            else:
-                st.error("No Parkinson's report data available")
+elif st.session_state.page == "Parkinson's Prediction":
+    st.write("## Parkinson's Disease Prediction Results")
+    parkinsons_data = st.session_state.get('parkinsons_data', None)
+    if parkinsons_data:
+        with st.spinner("🧑‍🔬 Analyzing Parkinson's report... Please wait!"):
+            time.sleep(4)
+            st.success("✅ Analysis complete! We'll update you shortly.")
+            st.info("We are working on improving the results. Check back soon for more detailed analysis.")
+    else:
+        st.error("No Parkinson's report data available")
 # Sidebar for navigation
 
 
@@ -472,7 +467,8 @@ def home_page():
     <ul>
         <li>💉 <b>Diabetes Prediction:</b> Predicts the likelihood of diabetes based on health metrics.</li>
         <li>❤️ <b>Heart Disease Prediction:</b> Assesses heart disease risk based on various factors.</li>
-        <li>🔬 <b>AI-Based Prediction:</b> Uses machine learning algorithms for accurate results.</li>
+        <li> <b>Parkinson Disease Prediction:</b> Assesses heart disease risk based on various factors.</li>
+        <li>🔬 <b>Predict Disease By Symptoms:</b> Uses machine learning algorithms for accurate results.</li>
     </ul>
     """, unsafe_allow_html=True)
 
@@ -508,11 +504,12 @@ def disease_prediction():
         age = st.number_input("Age", min_value=0)
 
         if st.button("Predict Diabetes"):
+         if glucose == 0 or blood_pressure == 0 or bmi == 0.0 or age == 0:
+          st.warning("⚠️ Please fill in all required fields before predicting.")
+        else:
             input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, dpf, age]])
-
             prediction = models["diabetes_best"].predict(input_data)
             result = "Positive for Diabetes. Consult a doctor!" if prediction[0] == 1 else "No Diabetes detected."
-
             st.success(result)
 
     elif disease == "Heart Disease":
@@ -532,11 +529,21 @@ def disease_prediction():
         thal = st.selectbox("Thalassemia (1-3)", [1, 2, 3])
 
         if st.button("Predict Heart Disease"):
+            if age == 1 or trestbps == 80 or chol == 100 or thalach == 60:
+                st.warning("⚠️ Please enter all required values before predicting.")
+        else:
             input_data = np.array([[age, 1 if sex == "Male" else 0, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]])
             prediction = models["heart"].predict(input_data)
             result = "Has Heart Disease. Consult a doctor!" if prediction[0] == 1 else "No Heart Disease detected."
             st.success(result)
-            
+
+    
+    
+    
+    
+    
+    
+    
     else:
      
     
@@ -574,22 +581,23 @@ def disease_prediction():
             gender_binary = 1 if gender == "Male" else 0
     
             if st.button("Predict Parkinson's Disease"):
-                input_data = np.array([[
-        age, gender_binary, ethnicity, bmi, smoking, alcohol, physical_activity, diet_quality, 
-        sleep_quality, family_history, brain_injury, diabetes, depression, stroke, systolic_bp, 
-        diastolic_bp, cholesterol, tremor, rigidity, bradykinesia, postural_instability, 
-        speech_problems, sleep_disorders, constipation
-    ]])
+                if age == 0 or bmi == 0.0 or sleep_quality == 0.0 or cholesterol == 0.0:
+                    st.warning("⚠️ Please provide all necessary inputs before predicting.")
+            else:
+                input_data = np.array([[age, gender_binary, ethnicity, bmi, smoking, alcohol, physical_activity, diet_quality, 
+                                        sleep_quality, family_history, brain_injury, diabetes, depression, stroke, systolic_bp, 
+                                        diastolic_bp, cholesterol, tremor, rigidity, bradykinesia, postural_instability, 
+                                        speech_problems, sleep_disorders, constipation]])
                 prediction = models["parkinsons"].predict(input_data)
                 result = "Parkinson's Detected. Consult a specialist!" if prediction[0] == 1 else "No Parkinson's detected."
                 st.success(result)
-    
 # About Page
 def about_page():
-    st.markdown("""
-                <h1  class='animatedtext'>ℹ️ About the Team</h1>"
+   
+    st.markdown("<h1 class='animated-text'>ℹ️ About the Team</h1>", unsafe_allow_html=True)
                 
-                """, unsafe_allow_html=True)
+                
+                
 
     # Team and Background Details
     st.markdown("""
@@ -706,10 +714,10 @@ def symptom_checker():
     
     # Load the disease prediction model and encoder specifically for symptom checker
     try:
-        model_path = "C:/Users/User/Desktop/Disease/optimized_disease_prediction_model(the model file).sav"
+        model_path = "./optimized_disease_prediction_model(the model file).sav"
         model = joblib.load(model_path)
         
-        encoder_path = "C:/Users/User/Desktop/Disease/disease_label_encoder(for converting disease names).sav"
+        encoder_path = "./disease_label_encoder(for converting disease names).sav"
         with open(encoder_path, "rb") as encoder_file:
             label_encoder = joblib.load(encoder_file)
     except Exception as e:
