@@ -54,12 +54,13 @@ st.markdown("""
             box-shadow: 4px 0px 10px rgba(255, 255, 255, 0.3);
         }
 
-       
-
         /* Header Text Styling */
+        h1, h2, h3 {
+            color: black !important; /* Set heading text color to black */
+        }
+
         h1 {
             font-size: 45px !important;
-            color: #154360; /* Deep Blue */
             text-align: center;
             font-weight: bold;
             text-shadow: 3px 3px 10px rgba(255, 255, 255, 0.6);
@@ -68,10 +69,14 @@ st.markdown("""
 
         h2 {
             font-size: 32px;
-            color: #2E86C1; /* Brighter Blue */
             font-weight: bold;
             text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.5);
             animation: slideIn 1.2s ease-in-out;
+        }
+
+        h3 {
+            font-size: 24px;
+            font-weight: bold;
         }
 
         /* Paragraph & List Styling */
@@ -164,9 +169,6 @@ st.markdown("""
 
     </style>
 """, unsafe_allow_html=True)
-
-
-
 # Add a logo to the sidebar
 #st.sidebar.image("https://your-image-url.com/logo.png", use_column_width=True, output_format="PNG", caption="Disease Prediction")
 
@@ -734,21 +736,25 @@ def symptom_checker():
                 key=f"symptom_{i}",
                 label_visibility="collapsed"
             )
-        with col3:
-            severity = st.selectbox(
-                "",
-                ("Easy", "Moderate", "Hard"),
-                key=f"severity_{i}",
-                label_visibility="collapsed"
-            )
         if response == "Yes":
-            if severity == "Easy":
-                input_vector[0, i] = 1
-            elif severity == "Moderate":
-                input_vector[0, i] = 2
-            elif severity == "Hard":
-                input_vector[0, i] = 3
-            selected_symptoms.append(f"{symptom} ({severity})")
+            with col3:
+                severity = st.selectbox(
+                    "",
+                    ("Mild", "Moderate", "Severe", "Critical"),
+                    key=f"severity_{i}",
+                    label_visibility="collapsed"
+                )
+                if severity == "Mild":
+                    input_vector[0, i] = 1
+                elif severity == "Moderate":
+                    input_vector[0, i] = 2
+                elif severity == "Severe":
+                    input_vector[0, i] = 3
+                elif severity == "Critical":
+                    input_vector[0, i] = 4
+                selected_symptoms.append(f"{symptom} ({severity})")
+        else:
+            input_vector[0, i] = 0
         
         progress = (i + 1) / len(symptom_list)
         progress_bar.progress(progress)
@@ -758,36 +764,26 @@ def symptom_checker():
     if st.button("Predict Disease", key="predict_button"):
         if any(input_vector[0]):
             try:
-                with st.spinner('Analyzing symptoms...'):
-                    time.sleep(1)
+                # Make sure model is properly loaded before prediction
+                if hasattr(model, 'predict'):
+                    prediction = model.predict(input_vector)
+                    disease = label_encoder.inverse_transform(prediction)[0]
                     
-                    # Make sure model is properly loaded before prediction
-                    if hasattr(model, 'predict'):
-                        prediction = model.predict(input_vector)
-                        disease = label_encoder.inverse_transform(prediction)[0]
-                        
-                        st.markdown('<div class="prediction-container">', unsafe_allow_html=True)
-                        st.success(f"🔍 Predicted Disease: **{disease}**")
-                        st.markdown('</div>', unsafe_allow_html=True)
-                        
-                        if selected_symptoms:
-                            st.markdown("### Selected Symptoms:")
-                            for symptom in selected_symptoms:
-                                st.markdown(f"- {symptom.replace('_', ' ').title()}")
-                    else:
-                        st.error("Model not properly loaded. Please check the model file.")
+                    st.markdown('<div class="prediction-container">', unsafe_allow_html=True)
+                    st.success(f"🔍 Predicted Disease: **{disease}**")
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    if selected_symptoms:
+                        st.markdown("### Selected Symptoms:")
+                        for symptom in selected_symptoms:
+                            st.markdown(f"- {symptom.replace('_', ' ').title()}")
+                else:
+                    st.error("Model not properly loaded. Please check the model file.")
             except Exception as e:
                 st.error(f"Error during prediction: {e}")
         else:
             st.error("⚠️ Please select at least one symptom.")
-    
-    # Contact information with link styling
-    
 
-# Example of calling the about_page function
-
-
-# Page Selection
 if choice == "Home":
     home_page()
 elif choice == "Predict By Report":
