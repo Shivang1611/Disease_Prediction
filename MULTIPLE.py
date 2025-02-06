@@ -170,8 +170,7 @@ st.markdown("""
         }
 
     </style>
-""", unsafe_allow_html=True)
-# Add a logo to the sidebar
+""", unsafe_allow_html=True)# Add a logo to the sidebar
 #st.sidebar.image("https://your-image-url.com/logo.png", use_column_width=True, output_format="PNG", caption="Disease Prediction")
 
 # Sidebar Navigation
