@@ -245,7 +245,7 @@ st.sidebar.markdown("---")
 
 
 
-menu = ["Home","Predict By Symptoms", "Predict By Report",  "About", "Query", "Upload Reports"]
+menu = ["Home","Predict By Symptoms", "Predict By Report","Upload Reports","Query","About"]
 choice = st.sidebar.selectbox("Navigation", menu, key="main_navigation")
 # Sidebar Separator
 st.sidebar.markdown("---")
@@ -317,11 +317,13 @@ def Query():
         submit_button = st.form_submit_button("Send Query", help="Submit your query via email")
 
         if submit_button:
-            if send_email(user_email, query_message):
-                st.success("Your query has been sent successfully!")
+            if not user_email or not query_message:
+                st.warning("⚠️ Please fill in both the email and query message fields before submitting.")
             else:
-                st.error("Failed to send your query. Please try again later.")
-
+                if send_email(user_email, query_message):
+                    st.success("Your query has been sent successfully!")
+                else:
+                    st.error("Failed to send your query. Please try again later.")
 
 
 
