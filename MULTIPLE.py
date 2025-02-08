@@ -231,10 +231,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Sidebar with Navigation Buttons
-
-
-# Sidebar Buttons
 
 
 
@@ -249,7 +245,7 @@ st.sidebar.markdown("---")
 
 
 
-menu = ["Home", "Predict By Report", "Predict By Symptoms", "About", "Query", "Upload Reports"]
+menu = ["Home","Predict By Symptoms", "Predict By Report",  "About", "Query", "Upload Reports"]
 choice = st.sidebar.selectbox("Navigation", menu, key="main_navigation")
 # Sidebar Separator
 st.sidebar.markdown("---")
@@ -326,9 +322,7 @@ def Query():
             else:
                 st.error("Failed to send your query. Please try again later.")
 
-# Page Navigation
-if choice == "Query":
-    Query()
+
 
 
 def create_report_upload_page():
@@ -525,34 +519,9 @@ def home_page():
 def disease_prediction():
     st.markdown("<h1 class='animated-text'>🔍 Disease Prediction By Report</h1>", unsafe_allow_html=True)
     
-    disease = st.selectbox("Select Disease", ["Diabetes", "Heart Disease", "Parkinson's Disease"])
+    disease = st.selectbox("Select Disease", ["Heart Disease", "Parkinson's Disease", "Diabetes"])
     
-    if disease == "Diabetes":
-        st.subheader("Diabetes Prediction")
-        sex = st.selectbox("Sex", ["Female", "Male"])
-        
-        pregnancies = 0 if sex == "Male" else st.number_input("Number of Pregnancies", min_value=0)
-        glucose = st.number_input("Glucose Level", min_value=0)
-        blood_pressure = st.number_input("Blood Pressure Level", min_value=0)
-        skin_thickness = st.number_input("Skin Thickness", min_value=0)
-        insulin = st.number_input("Insulin Level", min_value=0)
-        bmi = st.number_input("BMI", min_value=0.0)
-        dpf = st.number_input("Diabetes Pedigree Function", min_value=0.0)
-        age = st.number_input("Age", min_value=0)
-
-        if st.button("Predict Diabetes"):
-            if glucose == 0 or blood_pressure == 0 or bmi == 0.0 or age == 0:
-                st.warning("⚠️ Please fill in all required fields before predicting.")
-            else:
-                try:
-                    input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, dpf, age]])
-                    prediction = models["diabetes_best"].predict(input_data)
-                    result = "Positive for Diabetes. Consult a doctor!" if prediction[0] == 1 else "No Diabetes detected."
-                    st.success(result)
-                except ValueError:
-                    st.error("You entered the wrong input, please enter the correct input.")
-
-    elif disease == "Heart Disease":
+    if disease == "Heart Disease":
         st.subheader("Heart Disease Prediction")
         age = st.number_input("Age", min_value=1)
         sex = st.selectbox("Sex", ["Female", "Male"])
@@ -579,8 +548,8 @@ def disease_prediction():
                     st.success(result)
                 except ValueError:
                     st.error("You entered the wrong input, please enter the correct input.")
-
-    else:
+    
+    elif disease == "Parkinson's Disease":
         st.subheader("Parkinson's Disease Prediction")
 
         age = st.number_input("Age", min_value=0, step=1)
@@ -623,7 +592,33 @@ def disease_prediction():
                     result = "Parkinson's Detected. Consult a specialist!" if prediction[0] == 1 else "No Parkinson's detected."
                     st.success(result)
                 except ValueError:
-                    st.error("You entered the wrong input, please enter the correct input.")# About Page
+                    st.error("You entered the wrong input, please enter the correct input.")
+    
+    elif disease == "Diabetes":
+        st.subheader("Diabetes Prediction")
+        sex = st.selectbox("Sex", ["Female", "Male"])
+        
+        pregnancies = 0 if sex == "Male" else st.number_input("Number of Pregnancies", min_value=0)
+        glucose = st.number_input("Glucose Level", min_value=0)
+        blood_pressure = st.number_input("Blood Pressure Level", min_value=0)
+        skin_thickness = st.number_input("Skin Thickness", min_value=0)
+        insulin = st.number_input("Insulin Level", min_value=0)
+        bmi = st.number_input("BMI", min_value=0.0)
+        dpf = st.number_input("Diabetes Pedigree Function", min_value=0.0)
+        age = st.number_input("Age", min_value=0)
+
+        if st.button("Predict Diabetes"):
+            if glucose == 0 or blood_pressure == 0 or bmi == 0.0 or age == 0:
+                st.warning("⚠️ Please fill in all required fields before predicting.")
+            else:
+                try:
+                    input_data = np.array([[pregnancies, glucose, blood_pressure, skin_thickness, insulin, bmi, dpf, age]])
+                    prediction = models["diabetes_best"].predict(input_data)
+                    result = "Positive for Diabetes. Consult a doctor!" if prediction[0] == 1 else "No Diabetes detected."
+                    st.success(result)
+                except ValueError:
+                    st.error("You entered the wrong input, please enter the correct input.")
+   # About Page
 def about_page():
    
     st.markdown("<h1 class='animated-text'>ℹ️ About the Team</h1>", unsafe_allow_html=True)
@@ -822,15 +817,16 @@ def symptom_checker():
 
 if choice == "Home":
     home_page()
-elif choice == "Predict By Report":
-    disease_prediction()
 elif choice == "Predict By Symptoms":
     symptom_checker()
-
-elif choice == 'Upload Reports':
-    create_report_upload_page()
+elif choice == "Predict By Report":
+    disease_prediction()
 elif choice == "About":
     about_page()
+elif choice == "Query":
+    Query()
+elif choice == "Upload Reports":
+    create_report_upload_page()
 
 # Footer
 
