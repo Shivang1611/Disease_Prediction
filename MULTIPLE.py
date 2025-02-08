@@ -252,20 +252,24 @@ choice = st.sidebar.selectbox("Navigation", menu)
 st.sidebar.markdown("---")
 
 # Function for Query Page
-import yagmail
-
+import streamlit as st
+import requests
 
 def send_email(user_email, query_message):
-    sender_email = "your_email@gmail.com"
-    receiver_email = "shivangshukla306@gmail.com"
-    password = "ijnp nywr dnmr kqxj"  # Use an app-specific password if 2FA is enabled
+    formspree_url = "https://formspree.io/f/mbldkzjl"  # Replace with your Formspree form endpoint URL
+
+    data = {
+        "email": user_email,
+        "message": query_message
+    }
 
     try:
-        yag = yagmail.SMTP(sender_email, password)
-        subject = "New Query from Disease Prediction App"
-        body = f"User Email: {user_email}\n\nQuery Message:\n{query_message}"
-        yag.send(to=receiver_email, subject=subject, contents=body)
-        return True
+        response = requests.post(formspree_url, data=data)
+        if response.status_code == 200:
+            return True
+        else:
+            st.error(f"Error sending email: {response.status_code}")
+            return False
     except Exception as e:
         st.error(f"Error sending email: {e}")
         return False
@@ -321,7 +325,7 @@ def Query():
 
 # Page Navigation
 if choice == "Query":
-    Query()#upload report page 
+    Query()
 
 
 def create_report_upload_page():
