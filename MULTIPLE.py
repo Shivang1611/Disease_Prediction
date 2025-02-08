@@ -5,6 +5,7 @@ import joblib
 import pandas as pd
 import time
 from PIL import Image
+import requests
 
 # Load models
 def load_model(path):
@@ -246,14 +247,16 @@ st.sidebar.markdown("---")
 
 # Sidebar Profile Section
 
+
+
 menu = ["Home", "Predict By Report", "Predict By Symptoms", "About", "Query", "Upload Reports"]
-choice = st.sidebar.selectbox("Navigation", menu)
+choice = st.sidebar.selectbox("Navigation", menu, key="main_navigation")
 # Sidebar Separator
 st.sidebar.markdown("---")
 
-# Function for Query Page
-import streamlit as st
-import requests
+# Query Page
+
+
 
 def send_email(user_email, query_message):
     formspree_url = "https://formspree.io/f/mbldkzjl"  # Replace with your Formspree form endpoint URL
@@ -313,8 +316,8 @@ def Query():
     """, unsafe_allow_html=True)
 
     with st.form(key='query_form'):
-        user_email = st.text_input("Your Email")
-        query_message = st.text_area("Your Query")
+        user_email = st.text_input("Your Email", key="query_email")
+        query_message = st.text_area("Your Query", key="query_message")
         submit_button = st.form_submit_button("Send Query", help="Submit your query via email")
 
         if submit_button:
