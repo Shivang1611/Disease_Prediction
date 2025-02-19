@@ -1,6 +1,11 @@
 streamlit
 numpy
 pandas
+scikit-learn
 joblib
 pillow
-scikit-learn
+requests
+folium
+streamlit-folium
+geopy
+pickle
