@@ -3,4 +3,9 @@ venv/
 
 # environments
 
+# पायथन वर्चुअल एनवायरनमेंट के अतिरिक्त पैटर्न
+__pycache__/
+*.py[cod]
+*$py.class
+
 
