@@ -6,6 +6,22 @@ import pandas as pd
 import time
 from PIL import Image
 import requests
+import first_aid_information
+
+#... (Your existing code for other functions and pages)...
+
+# Sidebar Navigation (Modified)
+menu = ["Home", "Predict By Symptoms", "Predict By Report", "Upload Reports", "First Aid", "Query", "About"]  # Add "First Aid"
+choice = st.sidebar.selectbox("Navigation", menu, key="main_navigation")
+
+#... (Your existing code for handling other pages)...
+
+elif choice == "First Aid":
+    first_aid_information.show_first_aid_page()  # Call the function from the module
+
+
+
+
 
 # Load models
 def load_model(path):
