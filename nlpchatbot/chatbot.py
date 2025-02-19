@@ -8,11 +8,14 @@ import pyttsx3
 import speech_recognition as sr
 import threading
 
+import os
+from dotenv import load_dotenv
+
 # OpenAI API configuration
-OPENAI_API_KEY = "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"  # Replace with your actual OpenAI API key
+
 
 # Initialize the OpenAI client
-client = OpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Initialize pyttsx3 engine globally
 engine = pyttsx3.init()

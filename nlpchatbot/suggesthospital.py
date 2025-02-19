@@ -5,6 +5,9 @@ from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 import requests
 import time
+import os
+
+print("Current file path:", os.path.abspath(__file__))
 
 def get_nearby_healthcare(lat, lon, radius=5000):
     """
