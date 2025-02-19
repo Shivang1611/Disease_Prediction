@@ -6,6 +6,11 @@ import pandas as pd
 import time
 from PIL import Image
 import requests
+import os
+
+def inject_custom_css():
+    with open(os.path.join("static", "style.css"), "r") as f:  # Use os.path.join
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # Load models
 def load_model(path):
@@ -21,18 +26,18 @@ def load_model(path):
 
 # Paths to trained models
 model_paths = {
-    "Symptoms": "./optimized_disease_prediction_model(the model file).sav",
-    "diabetes_best": "./best_model_for_diabetes.sav",
-    "heart": "./trained_model_for_heart_disease.sav",
-    "parkinsons": "./parkinsons_model.sav"
+    "Symptoms": "./models/optimized_disease_prediction_model.sav",
+    "diabetes_best": "./models/best_model_for_diabetes.sav",
+    "heart": "./models/trained_model_for_heart_disease.sav",
+    "parkinsons": "./models/parkinsons_model.sav"
 }
 models = {name: load_model(path) for name, path in model_paths.items()}
-encoder_path = "./disease_label_encoder(for converting disease names).sav"
+encoder_path = "./models/disease_label_encoder.sav"
 with open(encoder_path, "rb") as encoder_file:
     label_encoder = joblib.load(encoder_file)
 
 # Load symptom names
-df = pd.read_csv("./Testing.csv")
+df = pd.read_csv("./testing/Testing.csv")
 symptom_list = list(df.columns[:-1])
 
 # Set Streamlit page configuration
@@ -40,201 +45,7 @@ st.set_page_config(page_title="Multiple Disease Prediction", layout="wide")
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
     
-st.markdown("""
-    <style>
-        /* Global Background Image for Entire App */
-        [data-testid="stAppViewContainer"], [data-testid="stSidebar"], [data-testid="stHeader"], [data-testid="stFooter"] {
-            background: url('https://img.freepik.com/free-vector/clean-medical-background-vector_53876-175203.jpg?ga=GA1.1.968891202.1731431691&semt=ais_hybrid') no-repeat center center fixed !important;
-            background-size: cover !important;
-        }
-
-        /* Sidebar Customization */
-        [data-testid="stSidebar"] {
-            background: rgba(0, 0, 0, 0.9) !important; /* Darker Background */
-            color: #FAD7A0 !important;
-            box-shadow: 4px 0px 10px rgba(255, 255, 255, 0.3);
-            padding: 20px;
-            border-radius: 0 15px 15px 0;
-        }
-
-        /* Header Text Styling */
-        h1, h2, h3 {
-            color: black !important; /* Set heading text color to black */
-        }
-
-        h1 {
-            font-size: 45px !important;
-            text-align: center;
-            font-weight: bold;
-            text-shadow: 3px 3px 10px rgba(255, 255, 255, 0.6);
-            animation: fadeIn 1.2s ease-in-out;
-        }
-
-        h2 {
-            font-size: 32px;
-            font-weight: bold;
-            text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.5);
-            animation: slideIn 1.2s ease-in-out;
-        }
-
-        h3 {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        /* Paragraph & List Styling */
-        p, ul {
-            font-size: 18px;
-            color: #154360; /* Deep Blue */
-            font-weight: normal;
-            background: rgba(255, 255, 255, 0.7); /* Light Transparent White */
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-
-        p:hover, ul:hover {
-            transform: scale(1.03);
-            box-shadow: 5px 5px 18px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Buttons */
-        .stButton>button {
-            background: linear-gradient(135deg, #2874A6, #1A5276) !important; /* Gradient Blue */
-            color: white !important;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 10px;
-            padding: 12px 20px;
-            border: none;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .stButton>button:hover {
-            background: linear-gradient(135deg, #154360, #1A5276) !important;
-            transform: translateY(-3px);
-            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Input Box */
-        .stTextInput>div>div>input {
-            background: rgba(200, 200, 255, 0.8) !important; /* Soft White */
-            color: #154360 !important; /* Deep Blue */
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #2E86C1 !important;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .stTextInput>div>div>input:focus {
-            background: rgba(255, 255, 255, 0.9) !important;
-            border: 1px solid #154360 !important;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            0% { opacity: 0; transform: translateX(-30px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-            100% { transform: scale(1); }
-        }
-
-        /* Animated Elements */
-        .animated-text {
-            animation: fadeIn 1.5s ease-in-out, pulse 3s infinite alternate;
-        }
-
-        /* Cards */
-        .stCard {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .stCard:hover {
-            transform: translateY(-5px);
-            box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Media Query for Mobile Devices */
-        @media (max-width: 768px) {
-            h1 {
-                text-align: center !important;
-                font-size: 22px !important;
-            }
-            h2 {
-                font-size: 24px !important;
-            }
-        }
-
-    </style>
-""", unsafe_allow_html=True)
-#st.sidebar.image("https://your-image-url.com/logo.png", use_column_width=True, output_format="PNG", caption="Disease Prediction")
-
-# Sidebar Navigation
-st.markdown("""
-    <style>
-        /* Global Background Image for Entire App */
-        [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stFooter"] {
-            background: url('https://img.freepik.com/free-vector/clean-medical-background-vector_53876-175203.jpg') no-repeat center center fixed !important;
-            background-size: cover !important;
-        }
-
-        /* Sidebar - Stylish Look */
-        [data-testid="stSidebar"] {
-            background: rgba(0, 0, 0, 0.75) !important; /* Darker Background */
-            color: #FAD7A0 !important;
-            padding: 20px;
-            box-shadow: 4px 0px 10px rgba(255, 255, 255, 0.2);
-            border-radius: 0 15px 15px 0;
-        }
-
-      
-        
-       
-
-      
-       
-
-        /* Input Box */
-        .stTextInput>div>div>input {
-            background: rgba(255, 255, 255, 0.8) !important;
-            color: #154360 !important;
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #2E86C1 !important;
-        }
-
-        /* Cards */
-        .stCard {
-            background: rgba(255, 255, 255, 0.85);
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-    </style>
-""", unsafe_allow_html=True)
-
-
-
-
-
+st.markdown(inject_custom_css())
 
 st.sidebar.markdown("---")
 
@@ -245,10 +56,259 @@ st.sidebar.markdown("---")
 
 
 
-menu = ["Home","Predict By Symptoms", "Predict By Report","Upload Reports","Query","About"]
+menu = ["Home","Predict By Symptoms", "Predict By Report","Upload Reports","First Aid info","Query","About"]
 choice = st.sidebar.selectbox("Navigation", menu, key="main_navigation")
 # Sidebar Separator
 st.sidebar.markdown("---")
+
+
+from PIL import Image
+ # Added missing import
+
+def show_first_aid_page():
+    st.title("First Aid Guide")
+    
+    st.markdown("""
+      <style>
+                    /* Global Background Image for Entire App */
+            [data-testid="stAppViewContainer"],
+            [data-testid="stSidebar"],
+            [data-testid="stHeader"],
+            [data-testid="stFooter"] {
+                background: url('https://img.freepik.com/free-vector/clean-medical-background-vector_53876-175203.jpg?ga=GA1.1.968891202.1731431691&semt=ais_hybrid') no-repeat center center fixed !important;
+                background-size: cover !important;
+            }
+
+            /* Sidebar Customization */
+            [data-testid="stSidebar"] {
+                background: rgba(0, 0, 0, 0.9) !important; /* Darker Background */
+                color: #FAD7A0 !important;
+                box-shadow: 4px 0px 10px rgba(255, 255, 255, 0.3);
+                padding: 20px;
+                border-radius: 0 15px 15px 0;
+            }
+
+            /* Header Text Styling */
+            h1,
+            h2,
+            h3 {
+                color: black !important; /* Set heading text color to black */
+            }
+
+            h1 {
+                font-size: 45px !important;
+                text-align: center;
+                font-weight: bold;
+                text-shadow: 3px 3px 10px rgba(255, 255, 255, 0.6);
+                animation: fadeIn 1.2s ease-in-out;
+            }
+
+            h2 {
+                font-size: 32px;
+                font-weight: bold;
+                text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.5);
+                animation: slideIn 1.2s ease-in-out;
+            }
+
+            h3 {
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            /* Paragraph & List Styling */
+            p,
+            ul {
+                font-size: 18px;
+                color: #154360; /* Deep Blue */
+                font-weight: normal;
+                background: rgba(255, 255, 255, 0.7); /* Light Transparent White */
+                padding: 15px;
+                border-radius: 12px;
+                box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.2);
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            }
+
+            p:hover,
+            ul:hover {
+                transform: scale(1.03);
+                box-shadow: 5px 5px 18px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Buttons */
+            .stButton>button {
+                background: linear-gradient(135deg, #2874A6, #1A5276) !important; /* Gradient Blue */
+                color: white !important;
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 10px;
+                padding: 12px 20px;
+                border: none;
+                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease-in-out;
+            }
+
+            .stButton>button:hover {
+                background: linear-gradient(135deg, #154360, #1A5276) !important;
+                transform: translateY(-3px);
+                box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+            }
+
+            /* Input Box */
+            .stTextInput>div>div>input {
+                background: rgba(200, 200, 255, 0.8) !important; /* Soft White */
+                color: #154360 !important; /* Deep Blue */
+                font-size: 16px;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid #2E86C1 !important;
+                transition: all 0.3s ease-in-out;
+            }
+
+            .stTextInput>div>div>input:focus {
+                background: rgba(255, 255, 255, 0.9) !important;
+                border: 1px solid #154360 !important;
+            }
+
+            /* Animations */
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                    transform: translateY(-15px);
+                }
+
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes slideIn {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-30px);
+                }
+
+                100% {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                }
+
+                50% {
+                    transform: scale(1.04);
+                }
+
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            /* Animated Elements */
+            .animated-text {
+                animation: fadeIn 1.5s ease-in-out, pulse 3s infinite alternate;
+            }
+
+            /* Cards */
+            .stCard {
+                background: rgba(255, 255, 255, 0.8);
+                padding: 15px;
+                border-radius: 15px;
+                box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease-in-out;
+            }
+
+            .stCard:hover {
+                transform: translateY(-5px);
+                box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Media Query for Mobile Devices */
+            @media (max-width: 768px) {
+                h1 {
+                    text-align: center !important;
+                    font-size: 22px !important;
+                }
+
+                h2 {
+                    font-size: 24px !important;
+                }
+            }
+ </style>
+    """, unsafe_allow_html=True)
+    
+    first_aid_data = {
+        "Burns": {
+            "description": "Cool the burn with running water for 10-15 minutes. Do not use ice. Cover with a sterile bandage.",
+            "image": "https://media.istockphoto.com/id/157501585/photo/closeup-of-steam-burn-on-mans-forearm.jpg?s=612x612&w=0&k=20&c=se9Pm0-wZI05JfToN3ePYAOgt0hHoSLUGLX_H-T7Zc4="
+        },
+        "Cuts": {
+            "description": "Clean the wound with soap and water. Apply pressure to stop bleeding. Cover with a bandage.",
+            "image": "https://cdn.wecanbeaeros.com/wp-content/uploads/cut-1024x683.jpg"
+        },
+        "Sprains": {
+            "description": "Rest, Ice, Compression, Elevation (RICE).",
+            "image": "sprain_image.gif"
+        },
+        "Nosebleeds": {
+            "description": "Sit upright and lean forward. Pinch your nostrils just below the bony bridge of your nose for 5-10 minutes. Breathe through your mouth.",
+            "image": "nosebleed_image.jpg"
+        },
+        "Choking": {
+            "description": "If someone is choking and cannot speak or breathe, perform the Heimlich maneuver. If unconscious, begin CPR.",
+            "image": "choking_image.jpg"
+        },
+        "Allergic Reactions": {
+            "description": "If someone has a severe allergic reaction (anaphylaxis), use an epinephrine auto-injector (EpiPen) if available and call emergency services immediately.",
+            "image": "allergy_image.jpg"
+        },
+        "Heart Attack": {
+            "description": "Recognize the signs: chest pain, shortness of breath, sweating, nausea. Call emergency services immediately.",
+            "image": "heart_attack_image.jpg"
+        },
+        "Fainting": {
+            "description": "If someone faints, lay them on their back and elevate their legs. Ensure they have fresh air. If they don't regain consciousness quickly, seek medical attention.",
+            "image": "fainting_image.jpg"  # Replace with your image
+        },
+        "Head Injuries": {
+            "description": "If someone has a head injury, keep them still and call for emergency medical help, especially if they lose consciousness, vomit, or have a seizure.",
+            "image": "head_injury_image.jpg" # Replace with your image
+        },
+        "Insect Stings": {
+            "description": "Remove the stinger if visible. Wash the area with soap and water. Apply a cold compress to reduce swelling. Watch for signs of an allergic reaction.",
+            "image": "sting_image.jpg" # Replace with your image
+        },
+        "Poisoning": {
+            "description": "If someone has ingested poison, call your local poison control center or emergency services immediately. Do not induce vomiting unless instructed to do so.",
+            "image": "poisoning_image.jpg" # Replace with your image
+        },
+    }
+    
+    # Create columns for better layout
+    for topic, info in first_aid_data.items():
+        col1, col2 = st.columns([1, 2])
+        
+        with col1:
+            st.subheader(topic)
+            with st.expander("Show Details"):
+                st.write(info["description"])
+        
+        with col2:
+            # Simplified image handling
+            try:
+                image_path = info.get("image", "")
+                if image_path and os.path.exists(image_path):
+                    image = Image.open(image_path)
+                    st.image(image, caption=f"{topic} First Aid", use_column_width=True)
+                else:
+                    st.write("Image not available")
+            except Exception as e:
+                st.write(f"Unable to load image: {str(e)}")
+
 
 # Query Page
 
@@ -277,7 +337,7 @@ def Query():
     st.markdown("<h1 class='animated-text'>Send Query</h1>", unsafe_allow_html=True)
     st.markdown("""
     <style>
-        .query-container {
+.query-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
@@ -630,7 +690,7 @@ def about_page():
 
     # Team and Background Details
     st.markdown("""
-    We are B.Tech students working on our mini project on **DISEASE PREDICTION WEB APP** using machine learning models.
+    We are B.Tech student **DISEASE PREDICTION WEB APP** using machine learning models.
 
     ### Team Members:
     - **<span class="hover-shadow">Shivang Shukla </span>**
@@ -736,17 +796,17 @@ def about_page():
             text-decoration: underline;
         }
         
-    </style>
+    </>
     """, unsafe_allow_html=True)
 def symptom_checker():
     st.markdown("<h1 class='animated-text'>🔍 Disease Prediction By Symptoms</h1>", unsafe_allow_html=True)
     
     # Load the disease prediction model and encoder specifically for symptom checker
     try:
-        model_path = "./optimized_disease_prediction_model(the model file).sav"
+        model_path = "./models/optimized_disease_prediction_model.sav"
         model = joblib.load(model_path)
         
-        encoder_path = "./disease_label_encoder(for converting disease names).sav"
+        encoder_path = "./models/disease_label_encoder.sav"
         with open(encoder_path, "rb") as encoder_file:
             label_encoder = joblib.load(encoder_file)
     except Exception as e:
@@ -829,6 +889,9 @@ elif choice == "Query":
     Query()
 elif choice == "Upload Reports":
     create_report_upload_page()
+elif choice == "First Aid info":
+   show_first_aid_page()
+
 
 # Footer
 
