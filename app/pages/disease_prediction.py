@@ -1,8 +1,19 @@
 import streamlit as st
 import numpy as np
-from hospital_finder import suggest_hospitals
+from typing import Dict, Any
+from utils.model_loader import load_models  # Updated import
+
+from utils.style_loader import load_css
 
 def disease_prediction():
+    load_css()
+    st.markdown("<h1 class='animated-text'>🔍 Disease Prediction By Report</h1>", 
+                unsafe_allow_html=True)
+    
+    # Rest of your code...
+
+def disease_prediction():
+    load_css()
     st.markdown("<h1 class='animated-text'>🔍 Disease Prediction By Report</h1>", unsafe_allow_html=True)
     
     disease = st.selectbox("Select Disease", ["Heart Disease", "Parkinson's Disease", "Diabetes"])

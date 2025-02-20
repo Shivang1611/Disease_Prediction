@@ -8,4 +8,3 @@ requests
 folium
 streamlit-folium
 geopy
-pickle
